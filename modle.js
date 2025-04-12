@@ -21,21 +21,38 @@
 
       function draw() {
         background(0);
+      
+        if (!videoReady) {
+          fill(255);
+          textSize(24);
+          textAlign(CENTER, CENTER);
+          text("Waiting for camera access...", width / 2, height / 2);
+          return;
+        }
+      
         image(video, 0, 0);
+      
+        if (label === "Smile") {
+          emoji = "😊";
+          displayLabel = "Smile";
+        } else if (label === "Neutral") {
+          emoji = "😐";
+          displayLabel = "Neutral";
+        } else if (label === "Uncertain") {
+          emoji = "😶";
+          displayLabel = "Uncertain";
+        } else {
+          emoji = "❓";
+          displayLabel = label; // fallback label
+        }
+      
         fill(255);
         textSize(32);
         textAlign(CENTER);
-        text(label, width / 2, height - 16);
-
-        // Emoji response
-        let emoji = "❓";
-        if (label === "Smile") {
-          emoji = "😊";
-        } else if (label === "Neutral") {
-          emoji = "😐";
-        }
+        text(displayLabel, width / 2, height - 16);
+      
         textSize(64);
-        text(emoji, width / 2, 40);
+        text(emoji, width / 2, 50);
       }
 
       function gotResult(error, results) {
@@ -43,7 +60,13 @@
           console.error(error);
           return;
         }
+      
+        console.log(results); 
         label = results[0].label;
-        classifyVideo(); // Keep classifying
+
+        classifyVideo(); // repeat
       }
+      
+      
+      
     
