@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Teachable Machine Project</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="style.css" />
+
+  <!-- 加载 p5.js 和 ml5.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.2/p5.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.2/addons/p5.sound.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/ml5@0.12.2/dist/ml5.min.js"></script>
+</head>
+
+<body>
+  <header>
+    <h1>LIS 500 Teachable Machine Project: Smile vs. Don't Smile</h1>
+    <nav>
+      <ul class="nav-menu">
+        <li><a href="index.html">home</a></li>
+        <li><a href="machine.html">our machine</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="section">
+    <p>
+      This is our real-time smile detection model. It uses your webcam to detect whether you're smiling or not, based on our Teachable Machine training. Please allow camera access when prompted.
+    </p>
+  </main>
+
+  <script>
+    let classifier;
+    let video;
+    let label = "Waiting...";
+    let displayLabel = "";
+    let emoji = "❓";
+    let videoReady = false;
+
+    const modelURL = 'https://teachablemachine.withgoogle.com/models/F3wjP2yOV/';
+
+    function preload() {
+      classifier = ml5.imageClassifier(modelURL + 'model.json');
+    }
+
+    function setup() {
+      createCanvas(640, 480);
+      video = createCapture(VIDEO, () => {
+        videoReady = true;
+        classifyVideo();
+      });
+      video.size(640, 480);
+      video.hide();
+    }
+
+    function classifyVideo() {
+      classifier.classify(video, gotResult);
+    }
+
+    function draw() {
+      background(0);
+
+      if (!videoReady) {
+        fill(255);
+        textSize(24);
+        textAlign(CENTER, CENTER);
+        text("Waiting for camera access...", width / 2, height / 2);
+        return;
+      }
+
+      image(video, 0, 0);
+
+      if (label === "Class 1") {
+        emoji = "😐";
+        displayLabel = "Neutral";
+      } else if (label === "Class 2") {
+        emoji = "😊";
+        displayLabel = "Smile";
+      }
+
+      fill(255);
+      textSize(32);
+      textAlign(CENTER);
+      text(displayLabel, width / 2, height - 16);
+
+      textSize(64);
+      text(emoji, width / 2, 50);
+    }
+
+    function gotResult(error, results) {
+      if (error) {
+        console.error(error);
+        return;
+      }
+      label = results[0].label;
+      console.log("Predicted label:", label);
+      classifyVideo();
+    }
+  </script>
+</body>
+</html>
