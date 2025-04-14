@@ -34,7 +34,7 @@
     let emoji = "❓";
     let videoReady = false;
 
-    const modelURL = 'https://teachablemachine.withgoogle.com/models/F3wjP2yOV/';
+    const modelURL = 'https://teachablemachine.withgoogle.com/models/7lCGQ6pvI/';
 
     function preload() {
         classifier = ml5.imageClassifier(modelURL + "model.json");
@@ -90,6 +90,8 @@
         classifyVideo();
       }
     </script>
+    /div> <!-- your main content or canvas div -->
+    <script src="model.js"></script>
   </body>
 </html>
 
